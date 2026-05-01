@@ -1,153 +1,917 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Salsa 🍕🔥</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Salsa Pizza Bar</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <!-- ═══════════════════════════════════════════════
+       SALSA PIZZA BAR — Landing Page
+       Fluxo:
+         1. Home  → acesso direto a Wi-Fi / Cardápio / Insta
+         2. Modal → cadastro opcional ("comunidade Salsa")
+         3. Toast → confirmação silenciosa após envio
+
+       Google Forms silent POST:
+         endpoint: .../formResponse  (target iframe oculto)
+         entry.735606983 = Nome
+         entry.636682420 = WhatsApp
+
+       Dados do Wi-Fi:
+         Rede : Salsa_WiFi
+         Senha: salsa123
+       ═══════════════════════════════════════════════ -->
 
   <style>
+    /* ─── Reset & Tokens ─── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      /* Cores */
+      --ink:      #0d0b09;
+      --surface:  #161210;
+      --panel:    #1e1914;
+      --border:   rgba(255,255,255,.08);
+      --red:      #ff2b4a;
+      --orange:   #ff6c1a;
+      --amber:    #ffb800;
+      --cream:    #f7f0e6;
+      --muted:    #6b6158;
+      --success:  #2ecc71;
+
+      /* Gradientes */
+      --grad-fire: linear-gradient(135deg, #ff2b4a 0%, #ff6c1a 55%, #ffb800 100%);
+      --grad-dark: linear-gradient(160deg, #1e1914 0%, #0d0b09 100%);
+
+      /* Glows */
+      --glow-sm:  0 0 20px rgba(255,108,26,.25);
+      --glow-md:  0 0 40px rgba(255,108,26,.35), 0 0 80px rgba(255,43,74,.15);
+
+      /* Tipografia */
+      --f-display: 'Syne', sans-serif;
+      --f-body:    'DM Sans', sans-serif;
+
+      /* Espaços */
+      --r-sm: 10px;
+      --r-md: 16px;
+      --r-lg: 24px;
+    }
+
+    html { scroll-behavior: smooth; }
+
     body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #0d0d0d;
-      color: white;
+      font-family: var(--f-body);
+      background: var(--ink);
+      color: var(--cream);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ─── Background ambiente ─── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 70% 50% at 50% -10%, rgba(255,43,74,.18) 0%, transparent 65%),
+        radial-gradient(ellipse 50% 40% at 100% 80%,  rgba(255,108,26,.1) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 30% at 0%   70%,  rgba(255,184,0,.07) 0%, transparent 60%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Grain */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.72' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23g)' opacity='0.035'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ─── Layout ─── */
+    .page {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
       display: flex;
-      justify-content: center;
+      flex-direction: column;
       align-items: center;
-      height: 100vh;
+      justify-content: center;
+      padding: 40px 20px 60px;
+      gap: 0;
     }
 
-    .container {
-      width: 90%;
+    /* ─── Hero brand ─── */
+    .hero {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 48px;
+      animation: fadeDown .9s cubic-bezier(.22,1,.36,1) both;
+    }
+
+    .logo-flame {
+      font-size: 2.8rem;
+      line-height: 1;
+      margin-bottom: 4px;
+      animation: flicker 4s ease-in-out infinite alternate;
+      filter: drop-shadow(0 0 12px rgba(255,108,26,.7));
+    }
+
+    @keyframes flicker {
+      0%   { filter: drop-shadow(0 0 8px  rgba(255,108,26,.6)); transform: scaleY(1);    }
+      30%  { filter: drop-shadow(0 0 20px rgba(255,184,0,.8));  transform: scaleY(1.05); }
+      60%  { filter: drop-shadow(0 0 12px rgba(255,43,74,.7));  transform: scaleY(.96);  }
+      100% { filter: drop-shadow(0 0 18px rgba(255,108,26,.9)); transform: scaleY(1.03); }
+    }
+
+    .logo-name {
+      font-family: var(--f-display);
+      font-size: clamp(5.5rem, 24vw, 10rem);
+      font-weight: 800;
+      letter-spacing: -.01em;
+      line-height: .88;
+      background: var(--grad-fire);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      position: relative;
+    }
+
+    /* blur glow duplo */
+    .logo-name::after {
+      content: attr(data-text);
+      position: absolute;
+      inset: 0;
+      background: var(--grad-fire);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      filter: blur(22px);
+      opacity: .55;
+      z-index: -1;
+    }
+
+    .logo-sub {
+      font-family: var(--f-display);
+      font-size: .8rem;
+      font-weight: 700;
+      letter-spacing: .45em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 8px;
+    }
+
+    /* ─── Card central ─── */
+    .card {
+      width: 100%;
       max-width: 400px;
+      background: rgba(30,25,20,.65);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      padding: 32px 24px;
+      backdrop-filter: blur(18px);
+      animation: fadeUp .9s .15s cubic-bezier(.22,1,.36,1) both;
+    }
+
+    .card-title {
+      font-family: var(--f-display);
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      color: var(--muted);
       text-align: center;
+      margin-bottom: 20px;
     }
 
-    input {
-      width: 100%;
-      padding: 12px;
-      margin: 10px 0;
-      border-radius: 8px;
-      border: none;
-      font-size: 16px;
+    /* ─── Action buttons (grid) ─── */
+    .actions {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 24px;
     }
 
-    button {
+    /* Botão primário — Wi-Fi (destaque total) */
+    .btn {
+      display: flex;
+      align-items: center;
+      gap: 14px;
       width: 100%;
-      padding: 14px;
-      background: linear-gradient(45deg, #ff3c00, #ff7300);
+      padding: 16px 20px;
       border: none;
-      border-radius: 10px;
-      color: white;
-      font-size: 16px;
-      font-weight: bold;
+      border-radius: var(--r-md);
+      font-family: var(--f-body);
+      font-size: 1rem;
+      font-weight: 500;
       cursor: pointer;
-      box-shadow: 0 0 15px rgba(255, 100, 0, 0.5);
+      text-decoration: none;
+      transition: transform .18s, box-shadow .25s, filter .2s, background .2s;
+      position: relative;
+      overflow: hidden;
     }
 
-    .hidden {
+    .btn::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(255,255,255,.09) 0%, transparent 55%);
+      pointer-events: none;
+    }
+
+    .btn-icon {
+      font-size: 1.4rem;
+      flex-shrink: 0;
+      line-height: 1;
+    }
+
+    .btn-text { display: flex; flex-direction: column; text-align: left; flex: 1; }
+    .btn-label { font-size: .68rem; letter-spacing: .12em; text-transform: uppercase; opacity: .65; }
+    .btn-value { font-weight: 700; font-size: 1rem; line-height: 1.3; }
+
+    .btn-arrow {
+      margin-left: auto;
+      opacity: .4;
+      font-size: 1rem;
+      transition: opacity .2s, transform .2s;
+    }
+
+    .btn:hover .btn-arrow { opacity: .9; transform: translateX(3px); }
+    .btn:hover { transform: translateY(-2px); }
+    .btn:active { transform: translateY(0) scale(.97); }
+
+    /* Wi-Fi — fogo */
+    .btn-wifi {
+      background: var(--grad-fire);
+      color: #fff;
+      box-shadow: var(--glow-sm);
+    }
+    .btn-wifi:hover { box-shadow: var(--glow-md); filter: brightness(1.08); }
+
+    /* Cardápio — escuro vibrante */
+    .btn-menu {
+      background: rgba(255,108,26,.12);
+      border: 1px solid rgba(255,108,26,.25);
+      color: var(--cream);
+    }
+    .btn-menu:hover { background: rgba(255,108,26,.22); border-color: rgba(255,108,26,.5); }
+
+    /* Instagram */
+    .btn-insta {
+      background: rgba(255,255,255,.04);
+      border: 1px solid var(--border);
+      color: var(--cream);
+    }
+    .btn-insta:hover { background: rgba(255,255,255,.09); border-color: rgba(255,255,255,.18); }
+
+    /* ─── Divisor ─── */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      color: var(--muted);
+      font-size: .72rem;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ─── Botão comunidade ─── */
+    .btn-community {
+      background: transparent;
+      border: 1.5px solid rgba(255,184,0,.3);
+      border-radius: var(--r-md);
+      width: 100%;
+      padding: 15px 20px;
+      font-family: var(--f-display);
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: .04em;
+      color: var(--amber);
+      cursor: pointer;
+      transition: all .2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .btn-community:hover {
+      background: rgba(255,184,0,.08);
+      border-color: var(--amber);
+      box-shadow: 0 0 24px rgba(255,184,0,.2);
+      transform: translateY(-1px);
+    }
+
+    /* ─── Modal ─── */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.75);
+      backdrop-filter: blur(6px);
+      z-index: 100;
+      display: flex;
+      align-items: flex-end; /* sheet do fundo no mobile */
+      justify-content: center;
+      padding: 0;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .3s;
+    }
+    .modal-overlay.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .modal {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg) var(--r-lg) 0 0;
+      width: 100%;
+      max-width: 480px;
+      padding: 28px 24px 40px;
+      transform: translateY(100%);
+      transition: transform .4s cubic-bezier(.22,1,.36,1);
+    }
+    .modal-overlay.open .modal { transform: translateY(0); }
+
+    /* Handle */
+    .modal-handle {
+      width: 36px;
+      height: 4px;
+      background: rgba(255,255,255,.15);
+      border-radius: 99px;
+      margin: 0 auto 24px;
+    }
+
+    .modal-title {
+      font-family: var(--f-display);
+      font-size: 1.6rem;
+      font-weight: 800;
+      margin-bottom: 4px;
+      background: var(--grad-fire);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .modal-sub {
+      font-size: .85rem;
+      color: var(--muted);
+      margin-bottom: 24px;
+      line-height: 1.5;
+    }
+
+    /* ─── Campos do form ─── */
+    .field { margin-bottom: 16px; }
+
+    .field label {
+      display: block;
+      font-size: .7rem;
+      font-weight: 500;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 7px;
+      transition: color .2s;
+    }
+    .field:focus-within label { color: var(--orange); }
+
+    .field input {
+      width: 100%;
+      background: rgba(255,255,255,.05);
+      border: 1.5px solid rgba(255,255,255,.1);
+      border-radius: var(--r-sm);
+      padding: 13px 15px;
+      font-family: var(--f-body);
+      font-size: .95rem;
+      color: var(--cream);
+      outline: none;
+      transition: border-color .2s, box-shadow .2s, background .2s;
+    }
+    .field input::placeholder { color: rgba(255,255,255,.2); }
+    .field input:focus {
+      border-color: var(--orange);
+      background: rgba(255,108,26,.06);
+      box-shadow: 0 0 0 3px rgba(255,108,26,.14);
+    }
+    .field input.err {
+      border-color: var(--red);
+      box-shadow: 0 0 0 3px rgba(255,43,74,.14);
+    }
+
+    .field-error {
+      font-size: .72rem;
+      color: var(--red);
+      margin-top: 5px;
       display: none;
     }
-    .pizza {
-  width: 120px;
-  height: 120px;
-  margin: 20px auto;
-  border-radius: 50%;
-  background: radial-gradient(circle at center, #ffcc66 60%, #cc6600 61%);
-  position: relative;
-  animation: girar 6s linear infinite;
-  box-shadow: 0 0 20px rgba(255, 140, 0, 0.5);
-}
-    .logo {
-  width: 220px;
-  display: block;
-  margin: 0 auto 20px;
- }
-    
+    .field-error.show { display: block; }
+
+    /* Aviso legal */
+    .legal {
+      background: rgba(255,184,0,.07);
+      border: 1px solid rgba(255,184,0,.2);
+      border-radius: var(--r-sm);
+      padding: 12px 14px;
+      font-size: .78rem;
+      color: rgba(255,240,180,.75);
+      line-height: 1.55;
+      margin-bottom: 20px;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+    .legal-icon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+
+    /* Botão submit do modal */
+    .btn-submit {
+      width: 100%;
+      padding: 15px;
+      background: var(--grad-fire);
+      border: none;
+      border-radius: var(--r-md);
+      font-family: var(--f-display);
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: .06em;
+      color: #fff;
+      cursor: pointer;
+      box-shadow: var(--glow-sm);
+      transition: all .2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-submit::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(255,255,255,.12) 0%, transparent 55%);
+      pointer-events: none;
+    }
+    .btn-submit:hover { transform: translateY(-2px); box-shadow: var(--glow-md); filter: brightness(1.08); }
+    .btn-submit:active { transform: scale(.97); }
+    .btn-submit:disabled { opacity: .55; cursor: not-allowed; transform: none; }
+
+    /* ─── Wi-Fi inline reveal ─── */
+    .wifi-reveal {
+      display: none;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 0;
+      animation: fadeUp .5s ease both;
+    }
+    .wifi-reveal.show { display: flex; }
+
+    .wifi-row {
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: var(--r-sm);
+      padding: 13px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .wifi-row-icon { font-size: 1.2rem; flex-shrink: 0; }
+    .wifi-row-content { flex: 1; }
+    .wifi-row-label {
+      font-size: .62rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 2px;
+    }
+    .wifi-row-value {
+      font-family: var(--f-display);
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--cream);
+      letter-spacing: .06em;
+    }
+    .wifi-row.senha .wifi-row-value {
+      background: var(--grad-fire);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      font-size: 1.4rem;
+    }
+
+    .copy-btn {
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 6px;
+      padding: 5px 10px;
+      font-size: .68rem;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      cursor: pointer;
+      font-family: var(--f-body);
+      transition: all .2s;
+      flex-shrink: 0;
+    }
+    .copy-btn:hover { border-color: var(--orange); color: var(--orange); background: rgba(255,108,26,.1); }
+    .copy-btn.ok   { border-color: var(--success); color: var(--success); }
+
+    /* ─── Toast ─── */
+    .toast {
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%) translateY(120%);
+      background: rgba(30,25,20,.95);
+      border: 1px solid rgba(255,108,26,.35);
+      border-radius: var(--r-md);
+      padding: 13px 20px;
+      font-size: .9rem;
+      color: var(--cream);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      z-index: 200;
+      transition: transform .4s cubic-bezier(.22,1,.36,1);
+      backdrop-filter: blur(12px);
+      white-space: nowrap;
+      box-shadow: 0 8px 32px rgba(0,0,0,.5);
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+
+    /* ─── Loading spinner inline ─── */
+    .spinner {
+      width: 18px; height: 18px;
+      border: 2px solid rgba(255,255,255,.2);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+      display: inline-block;
+      vertical-align: middle;
+      margin-right: 6px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ─── Keyframes ─── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(22px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ─── Embers ─── */
+    .embers { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+    .ember {
+      position: absolute;
+      bottom: -8px;
+      border-radius: 50%;
+      opacity: 0;
+      animation: rise linear infinite;
+    }
+    @keyframes rise {
+      0%   { opacity: 0; transform: translateY(0) scale(1); }
+      8%   { opacity: .8; }
+      80%  { opacity: .15; }
+      100% { opacity: 0; transform: translateY(-100vh) scale(.2) rotate(540deg); }
+    }
+
+    /* ─── Responsive (desktop abre modal centralizado) ─── */
+    @media (min-width: 540px) {
+      .modal-overlay { align-items: center; padding: 20px; }
+      .modal {
+        border-radius: var(--r-lg);
+        transform: scale(.92) translateY(20px);
+      }
+      .modal-overlay.open .modal { transform: scale(1) translateY(0); }
+      .modal-handle { display: none; }
+    }
   </style>
 </head>
-
 <body>
 
-<div class="container">
+<!-- ░░ Embers ░░ -->
+<div class="embers" id="embers"></div>
 
-  <div id="inicio">
-    <img src="salsa.png" class="logo">
-    <h1>Bem-vindo ao Salsa 🍕🔥</h1>
-    <p>Cadastre-se para liberar o Wi-Fi e acessar o cardápio</p>
-    <button onclick="mostrarFormulario()">Cadastrar</button>
+<!-- ░░ iframe oculto — recebe o POST do Google Forms sem redirecionar o usuário ░░ -->
+<iframe name="gform-target" id="gform-target" style="display:none" aria-hidden="true"></iframe>
+
+<!-- ░░ Toast de confirmação ░░ -->
+<div class="toast" id="toast">🎉 Cadastro realizado! Bem-vindo à comunidade Salsa.</div>
+
+<!-- ═══════ PÁGINA PRINCIPAL ═══════ -->
+<div class="page">
+
+  <!-- Brand -->
+  <div class="hero">
+    <span class="logo-flame">🔥</span>
+    <div class="logo-name" data-text="SALSA">SALSA</div>
+    <p class="logo-sub">Pizza Bar</p>
   </div>
 
-  <div id="formulario" class="hidden">
-    <h1>Cadastro</h1>
+  <!-- Card de ações -->
+  <div class="card">
+    <p class="card-title">O que você precisa?</p>
 
-    <input type="text" id="nome" placeholder="Seu nome" required>
-    <input type="tel" id="whatsapp" placeholder="Seu WhatsApp" required>
+    <div class="actions">
 
-    <button onclick="enviar()">Liberar acesso</button>
+      <!-- Wi-Fi: clique revela rede/senha inline -->
+      <button class="btn btn-wifi" id="btn-wifi" onclick="toggleWifi()">
+        <span class="btn-icon">📶</span>
+        <span class="btn-text">
+          <span class="btn-label">Clique para ver</span>
+          <span class="btn-value">Wi-Fi Grátis</span>
+        </span>
+        <span class="btn-arrow" id="wifi-arrow">›</span>
+      </button>
 
-    <p id="loading" class="hidden">Enviando...</p>
-    <p id="erro" class="hidden" style="color:red;">Erro ao enviar</p>
+      <!-- Wi-Fi reveal (oculto até clicar) -->
+      <div class="wifi-reveal" id="wifi-reveal">
+        <div class="wifi-row">
+          <span class="wifi-row-icon">📶</span>
+          <div class="wifi-row-content">
+            <p class="wifi-row-label">Rede</p>
+            <p class="wifi-row-value">Salsa_WiFi</p>
+          </div>
+          <button class="copy-btn" onclick="copy('Salsa_WiFi', this)">Copiar</button>
+        </div>
+        <div class="wifi-row senha">
+          <span class="wifi-row-icon">🔑</span>
+          <div class="wifi-row-content">
+            <p class="wifi-row-label">Senha</p>
+            <p class="wifi-row-value">salsa123</p>
+          </div>
+          <button class="copy-btn" onclick="copy('salsa123', this)">Copiar</button>
+        </div>
+      </div>
+
+      <!-- Cardápio -->
+      <a class="btn btn-menu" href="https://salsabazar.my.canva.site/menu" target="_blank" rel="noopener">
+        <span class="btn-icon">🍕</span>
+        <span class="btn-text">
+          <span class="btn-label">Acesse agora</span>
+          <span class="btn-value">Cardápio</span>
+        </span>
+        <span class="btn-arrow">›</span>
+      </a>
+
+      <!-- Instagram -->
+      <a class="btn btn-insta" href="https://www.instagram.com/salsapizzabar/" target="_blank" rel="noopener">
+        <span class="btn-icon">📲</span>
+        <span class="btn-text">
+          <span class="btn-label">Siga a gente</span>
+          <span class="btn-value">@salsapizzabar</span>
+        </span>
+        <span class="btn-arrow">›</span>
+      </a>
+
+    </div><!-- /actions -->
+
+    <!-- Divisor -->
+    <div class="divider">ou</div>
+
+    <!-- CTA comunidade -->
+    <button class="btn-community" onclick="openModal()">
+      ✨ Faça parte da comunidade Salsa
+    </button>
+
+  </div><!-- /card -->
+</div><!-- /page -->
+
+<!-- ═══════ MODAL CADASTRO ═══════ -->
+<div class="modal-overlay" id="modal-overlay" onclick="handleOverlayClick(event)">
+  <div class="modal" role="dialog" aria-modal="true" aria-label="Cadastro Comunidade Salsa">
+    <div class="modal-handle"></div>
+
+    <h2 class="modal-title">Comunidade Salsa 🔥</h2>
+    <p class="modal-sub">Fique por dentro de promoções exclusivas, eventos e novidades antes de todo mundo.</p>
+
+    <!--
+      action aponta para formResponse (submissão direta).
+      target="gform-target" envia para o iframe oculto — o usuário nunca sai da página.
+    -->
+    <form
+      id="gform"
+      action="https://docs.google.com/forms/d/e/1FAIpQLSf7TUjKteZZTqoN54kG3NcHnJDcZOMDMZKimBuY3DsvMhjM6A/formResponse"
+      method="POST"
+      target="gform-target"
+      onsubmit="handleSubmit(event)"
+      novalidate
+    >
+      <!-- Campos ocultos mapeados para o Google Forms -->
+      <input type="hidden" name="entry.735606983" id="f-nome" />
+      <input type="hidden" name="entry.636682420" id="f-wa"   />
+
+      <!-- Nome visível -->
+      <div class="field">
+        <label for="inp-nome">Nome</label>
+        <input id="inp-nome" type="text" placeholder="Seu nome completo" autocomplete="name" />
+        <p class="field-error" id="err-nome">Informe seu nome.</p>
+      </div>
+
+      <!-- WhatsApp visível com máscara -->
+      <div class="field">
+        <label for="inp-wa">WhatsApp</label>
+        <input id="inp-wa" type="tel" placeholder="(11) 99999-9999" autocomplete="tel" inputmode="numeric" />
+        <p class="field-error" id="err-wa">Informe um WhatsApp válido.</p>
+      </div>
+
+      <!-- Aviso legal (LGPD) -->
+      <div class="legal">
+        <span class="legal-icon">⚠️</span>
+        <span>Seu número de WhatsApp poderá ser utilizado para envio de promoções e avisos através da comunidade do Salsa.</span>
+      </div>
+
+      <button type="submit" class="btn-submit" id="btn-submit">Entrar na comunidade</button>
+    </form>
   </div>
-
-  <div id="sucesso" class="hidden">
-    <h1>Acesso liberado 🎉</h1>
-
-    <p><strong>Wi-Fi:</strong> Salsa_WiFi</p>
-    <p><strong>Senha:</strong> salsa123</p>
-
-    <br>
-
-    <a href="https://salsabazar.my.canva.site/menu" target="_blank">
-      <button>Ver Cardápio</button>
-    </a>
-
-    <br><br>
-
-    <a href="https://www.instagram.com/salsapizzabar/" target="_blank">
-      <button>Instagram 🔥</button>
-    </a>
-  </div>
-
 </div>
 
 <script>
-function mostrarFormulario() {
-  document.getElementById("inicio").classList.add("hidden");
-  document.getElementById("formulario").classList.remove("hidden");
-}
+  /* ════════════════════════════════════════
+     EMBERS — Partículas decorativas
+  ════════════════════════════════════════ */
+  (function () {
+    const wrap   = document.getElementById('embers');
+    const colors = ['#ff6c1a','#ff2b4a','#ffb800','#ff4400'];
+    for (let i = 0; i < 20; i++) {
+      const el = document.createElement('div');
+      el.className = 'ember';
+      const s = Math.random() * 5 + 2;
+      Object.assign(el.style, {
+        width:  s + 'px',
+        height: s + 'px',
+        left:   Math.random() * 100 + '%',
+        background: colors[Math.random() * colors.length | 0],
+        animationDuration:  (Math.random() * 9 + 5) + 's',
+        animationDelay:     (Math.random() * 7) + 's',
+        filter: s > 5 ? 'blur(1px)' : 'none',
+      });
+      wrap.appendChild(el);
+    }
+  })();
 
-function enviar() {
-  let nome = document.getElementById("nome").value;
-  let whatsapp = document.getElementById("whatsapp").value;
-
-  if (!nome || !whatsapp) {
-    alert("Preencha tudo");
-    return;
+  /* ════════════════════════════════════════
+     WI-FI — Toggle reveal
+  ════════════════════════════════════════ */
+  let wifiOpen = false;
+  function toggleWifi() {
+    wifiOpen = !wifiOpen;
+    document.getElementById('wifi-reveal').classList.toggle('show', wifiOpen);
+    document.getElementById('wifi-arrow').textContent = wifiOpen ? '˅' : '›';
+    const btn = document.getElementById('btn-wifi');
+    btn.querySelector('.btn-label').textContent = wifiOpen ? 'Conectado!' : 'Clique para ver';
   }
 
-  document.getElementById("loading").classList.remove("hidden");
+  /* ════════════════════════════════════════
+     COPIAR para área de transferência
+  ════════════════════════════════════════ */
+  function copy(text, btn) {
+    const finish = () => {
+      btn.textContent = '✓ Ok';
+      btn.classList.add('ok');
+      setTimeout(() => { btn.textContent = 'Copiar'; btn.classList.remove('ok'); }, 2000);
+    };
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(text).then(finish).catch(finish);
+    } else {
+      // Fallback legado
+      const ta = Object.assign(document.createElement('textarea'), {
+        value: text,
+        style: 'position:fixed;opacity:0'
+      });
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand('copy'); } catch(_) {}
+      document.body.removeChild(ta);
+      finish();
+    }
+  }
 
-  fetch("https://formspree.io/f/xykllglo", {
-    method: "POST",
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ nome, whatsapp })
-  })
-  .then(res => {
-    document.getElementById("formulario").classList.add("hidden");
-    document.getElementById("sucesso").classList.remove("hidden");
-  })
-  .catch(() => {
-    document.getElementById("erro").classList.remove("hidden");
-  })
-  .finally(() => {
-    document.getElementById("loading").classList.add("hidden");
+  /* ════════════════════════════════════════
+     MODAL — abrir / fechar
+  ════════════════════════════════════════ */
+  function openModal() {
+    document.getElementById('modal-overlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+    setTimeout(() => document.getElementById('inp-nome').focus(), 400);
+  }
+
+  function closeModal() {
+    document.getElementById('modal-overlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  // Fecha ao clicar fora do modal
+  function handleOverlayClick(e) {
+    if (e.target === document.getElementById('modal-overlay')) closeModal();
+  }
+
+  // Fecha com ESC
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+  /* ════════════════════════════════════════
+     MÁSCARA WhatsApp
+  ════════════════════════════════════════ */
+  document.getElementById('inp-wa').addEventListener('input', function () {
+    let v = this.value.replace(/\D/g, '').slice(0, 11);
+    if (v.length >= 7)
+      v = v.length === 11
+        ? v.replace(/^(\d{2})(\d{5})(\d{4})$/, '($1) $2-$3')
+        : v.replace(/^(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3');
+    else if (v.length >= 3)
+      v = v.replace(/^(\d{2})(\d+)/, '($1) $2');
+    this.value = v;
   });
-}
-</script>
 
+  /* ════════════════════════════════════════
+     VALIDAÇÃO
+  ════════════════════════════════════════ */
+  function validate() {
+    let ok = true;
+
+    const nome = document.getElementById('inp-nome').value.trim();
+    const inpN = document.getElementById('inp-nome');
+    const errN = document.getElementById('err-nome');
+    if (!nome) {
+      inpN.classList.add('err'); errN.classList.add('show'); ok = false;
+    } else {
+      inpN.classList.remove('err'); errN.classList.remove('show');
+    }
+
+    const wa   = document.getElementById('inp-wa').value.replace(/\D/g, '');
+    const inpW = document.getElementById('inp-wa');
+    const errW = document.getElementById('err-wa');
+    if (wa.length < 10) {
+      inpW.classList.add('err'); errW.classList.add('show'); ok = false;
+    } else {
+      inpW.classList.remove('err'); errW.classList.remove('show');
+    }
+
+    return ok;
+  }
+
+  // Remove erros ao focar
+  ['inp-nome', 'inp-wa'].forEach(id => {
+    document.getElementById(id).addEventListener('focus', function () {
+      this.classList.remove('err');
+      const key = id === 'inp-nome' ? 'nome' : 'wa';
+      document.getElementById('err-' + key).classList.remove('show');
+    });
+  });
+
+  /* ════════════════════════════════════════
+     SUBMIT — envia silenciosamente no iframe
+  ════════════════════════════════════════ */
+  function handleSubmit(e) {
+    e.preventDefault();
+    if (!validate()) return;
+
+    const nome = document.getElementById('inp-nome').value.trim();
+    const wa   = document.getElementById('inp-wa').value.trim();
+
+    // Preenche campos ocultos mapeados para o Google Forms
+    document.getElementById('f-nome').value = nome;
+    document.getElementById('f-wa').value   = wa;
+
+    // UX: desabilita botão e mostra spinner
+    const btn = document.getElementById('btn-submit');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Enviando…';
+
+    // Submete para o iframe (Google Forms recebe, usuário fica na página)
+    document.getElementById('gform').submit();
+
+    // Após envio: fecha modal + exibe toast de sucesso
+    setTimeout(() => {
+      btn.disabled = false;
+      btn.textContent = 'Entrar na comunidade';
+      closeModal();
+      showToast();
+      // Limpa formulário
+      document.getElementById('inp-nome').value = '';
+      document.getElementById('inp-wa').value   = '';
+    }, 1500);
+  }
+
+  /* ════════════════════════════════════════
+     TOAST
+  ════════════════════════════════════════ */
+  function showToast() {
+    const t = document.getElementById('toast');
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 4000);
+  }
+</script>
 </body>
 </html>
