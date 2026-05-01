@@ -2,35 +2,16 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Salsa Pizza Bar</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
 
-  <!-- ═══════════════════════════════════════════════
-       SALSA PIZZA BAR — Landing Page
-       Fluxo:
-         1. Home  → acesso direto a Wi-Fi / Cardápio / Insta
-         2. Modal → cadastro opcional ("comunidade Salsa")
-         3. Toast → confirmação silenciosa após envio
-
-       Google Forms silent POST:
-         endpoint: .../formResponse  (target iframe oculto)
-         entry.735606983 = Nome
-         entry.636682420 = WhatsApp
-
-       Dados do Wi-Fi:
-         Rede : Salsa_WiFi
-         Senha: salsa123
-       ═══════════════════════════════════════════════ -->
-
   <style>
-    /* ─── Reset & Tokens ─── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      /* Cores */
       --ink:      #0d0b09;
       --surface:  #161210;
       --panel:    #1e1914;
@@ -42,19 +23,15 @@
       --muted:    #6b6158;
       --success:  #2ecc71;
 
-      /* Gradientes */
       --grad-fire: linear-gradient(135deg, #ff2b4a 0%, #ff6c1a 55%, #ffb800 100%);
       --grad-dark: linear-gradient(160deg, #1e1914 0%, #0d0b09 100%);
 
-      /* Glows */
       --glow-sm:  0 0 20px rgba(255,108,26,.25);
       --glow-md:  0 0 40px rgba(255,108,26,.35), 0 0 80px rgba(255,43,74,.15);
 
-      /* Tipografia */
       --f-display: 'Syne', sans-serif;
       --f-body:    'DM Sans', sans-serif;
 
-      /* Espaços */
       --r-sm: 10px;
       --r-md: 16px;
       --r-lg: 24px;
@@ -70,7 +47,6 @@
       overflow-x: hidden;
     }
 
-    /* ─── Background ambiente ─── */
     body::before {
       content: '';
       position: fixed;
@@ -83,7 +59,6 @@
       z-index: 0;
     }
 
-    /* Grain */
     body::after {
       content: '';
       position: fixed;
@@ -93,7 +68,6 @@
       z-index: 0;
     }
 
-    /* ─── Layout ─── */
     .page {
       position: relative;
       z-index: 1;
@@ -106,7 +80,6 @@
       gap: 0;
     }
 
-    /* ─── Hero brand ─── */
     .hero {
       display: flex;
       flex-direction: column;
@@ -143,7 +116,6 @@
       position: relative;
     }
 
-    /* blur glow duplo */
     .logo-name::after {
       content: attr(data-text);
       position: absolute;
@@ -167,7 +139,6 @@
       margin-top: 8px;
     }
 
-    /* ─── Card central ─── */
     .card {
       width: 100%;
       max-width: 400px;
@@ -190,7 +161,6 @@
       margin-bottom: 20px;
     }
 
-    /* ─── Action buttons (grid) ─── */
     .actions {
       display: flex;
       flex-direction: column;
@@ -198,7 +168,6 @@
       margin-bottom: 24px;
     }
 
-    /* Botão primário — Wi-Fi (destaque total) */
     .btn {
       display: flex;
       align-items: center;
@@ -225,12 +194,7 @@
       pointer-events: none;
     }
 
-    .btn-icon {
-      font-size: 1.4rem;
-      flex-shrink: 0;
-      line-height: 1;
-    }
-
+    .btn-icon { font-size: 1.4rem; flex-shrink: 0; line-height: 1; }
     .btn-text { display: flex; flex-direction: column; text-align: left; flex: 1; }
     .btn-label { font-size: .68rem; letter-spacing: .12em; text-transform: uppercase; opacity: .65; }
     .btn-value { font-weight: 700; font-size: 1rem; line-height: 1.3; }
@@ -246,7 +210,6 @@
     .btn:hover { transform: translateY(-2px); }
     .btn:active { transform: translateY(0) scale(.97); }
 
-    /* Wi-Fi — fogo */
     .btn-wifi {
       background: var(--grad-fire);
       color: #fff;
@@ -254,7 +217,6 @@
     }
     .btn-wifi:hover { box-shadow: var(--glow-md); filter: brightness(1.08); }
 
-    /* Cardápio — escuro vibrante */
     .btn-menu {
       background: rgba(255,108,26,.12);
       border: 1px solid rgba(255,108,26,.25);
@@ -262,7 +224,6 @@
     }
     .btn-menu:hover { background: rgba(255,108,26,.22); border-color: rgba(255,108,26,.5); }
 
-    /* Instagram */
     .btn-insta {
       background: rgba(255,255,255,.04);
       border: 1px solid var(--border);
@@ -270,7 +231,6 @@
     }
     .btn-insta:hover { background: rgba(255,255,255,.09); border-color: rgba(255,255,255,.18); }
 
-    /* ─── Divisor ─── */
     .divider {
       display: flex;
       align-items: center;
@@ -288,7 +248,6 @@
       background: var(--border);
     }
 
-    /* ─── Botão comunidade ─── */
     .btn-community {
       background: transparent;
       border: 1.5px solid rgba(255,184,0,.3);
@@ -322,7 +281,7 @@
       backdrop-filter: blur(6px);
       z-index: 100;
       display: flex;
-      align-items: flex-end; /* sheet do fundo no mobile */
+      align-items: flex-end;
       justify-content: center;
       padding: 0;
       opacity: 0;
@@ -346,7 +305,6 @@
     }
     .modal-overlay.open .modal { transform: translateY(0); }
 
-    /* Handle */
     .modal-handle {
       width: 36px;
       height: 4px;
@@ -373,7 +331,6 @@
       line-height: 1.5;
     }
 
-    /* ─── Campos do form ─── */
     .field { margin-bottom: 16px; }
 
     .field label {
@@ -419,7 +376,6 @@
     }
     .field-error.show { display: block; }
 
-    /* Aviso legal */
     .legal {
       background: rgba(255,184,0,.07);
       border: 1px solid rgba(255,184,0,.2);
@@ -435,7 +391,6 @@
     }
     .legal-icon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
 
-    /* Botão submit do modal */
     .btn-submit {
       width: 100%;
       padding: 15px;
@@ -464,7 +419,7 @@
     .btn-submit:active { transform: scale(.97); }
     .btn-submit:disabled { opacity: .55; cursor: not-allowed; transform: none; }
 
-    /* ─── Wi-Fi inline reveal ─── */
+    /* ─── Wi-Fi reveal ─── */
     .wifi-reveal {
       display: none;
       flex-direction: column;
@@ -534,7 +489,7 @@
       border: 1px solid rgba(255,108,26,.35);
       border-radius: var(--r-md);
       padding: 13px 20px;
-      font-size: .9rem;
+      font-size: .88rem;
       color: var(--cream);
       display: flex;
       align-items: center;
@@ -542,12 +497,20 @@
       z-index: 200;
       transition: transform .4s cubic-bezier(.22,1,.36,1);
       backdrop-filter: blur(12px);
-      white-space: nowrap;
+      /* wraps text em telas pequenas, nunca ultrapassa as bordas */
+      white-space: normal;
+      max-width: calc(100vw - 32px);
+      width: max-content;
+      text-align: center;
       box-shadow: 0 8px 32px rgba(0,0,0,.5);
     }
     .toast.show { transform: translateX(-50%) translateY(0); }
 
-    /* ─── Loading spinner inline ─── */
+    /* Toast de erro */
+    .toast.error {
+      border-color: rgba(255,43,74,.45);
+    }
+
     .spinner {
       width: 18px; height: 18px;
       border: 2px solid rgba(255,255,255,.2);
@@ -560,7 +523,6 @@
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* ─── Keyframes ─── */
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(22px); }
       to   { opacity: 1; transform: translateY(0); }
@@ -570,7 +532,6 @@
       to   { opacity: 1; transform: translateY(0); }
     }
 
-    /* ─── Embers ─── */
     .embers { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
     .ember {
       position: absolute;
@@ -586,7 +547,6 @@
       100% { opacity: 0; transform: translateY(-100vh) scale(.2) rotate(540deg); }
     }
 
-    /* ─── Responsive (desktop abre modal centralizado) ─── */
     @media (min-width: 540px) {
       .modal-overlay { align-items: center; padding: 20px; }
       .modal {
@@ -600,31 +560,24 @@
 </head>
 <body>
 
-<!-- ░░ Embers ░░ -->
 <div class="embers" id="embers"></div>
 
-<!-- ░░ iframe oculto — recebe o POST do Google Forms sem redirecionar o usuário ░░ -->
-<iframe name="gform-target" id="gform-target" style="display:none" aria-hidden="true"></iframe>
-
-<!-- ░░ Toast de confirmação ░░ -->
-<div class="toast" id="toast">🎉 Cadastro realizado! Bem-vindo à comunidade Salsa.</div>
+<!-- Toast de confirmação -->
+<div class="toast" id="toast"></div>
 
 <!-- ═══════ PÁGINA PRINCIPAL ═══════ -->
 <div class="page">
 
-  <!-- Brand -->
   <div class="hero">
     <div class="logo-name" data-text="SALSA">SALSA</div>
     <p class="logo-sub">Pizza Bar</p>
   </div>
 
-  <!-- Card de ações -->
   <div class="card">
     <p class="card-title">O que você precisa?</p>
 
     <div class="actions">
 
-      <!-- Wi-Fi: clique revela rede/senha inline -->
       <button class="btn btn-wifi" id="btn-wifi" onclick="toggleWifi()">
         <span class="btn-icon">📶</span>
         <span class="btn-text">
@@ -634,7 +587,6 @@
         <span class="btn-arrow" id="wifi-arrow">›</span>
       </button>
 
-      <!-- Wi-Fi reveal (oculto até clicar) -->
       <div class="wifi-reveal" id="wifi-reveal">
         <div class="wifi-row">
           <span class="wifi-row-icon">📶</span>
@@ -654,7 +606,6 @@
         </div>
       </div>
 
-      <!-- Cardápio -->
       <a class="btn btn-menu" href="https://salsabazar.my.canva.site/menu" target="_blank" rel="noopener">
         <span class="btn-icon">🍕</span>
         <span class="btn-text">
@@ -664,7 +615,6 @@
         <span class="btn-arrow">›</span>
       </a>
 
-      <!-- Instagram -->
       <a class="btn btn-insta" href="https://www.instagram.com/salsapizzabar/" target="_blank" rel="noopener">
         <span class="btn-icon">📲</span>
         <span class="btn-text">
@@ -674,18 +624,16 @@
         <span class="btn-arrow">›</span>
       </a>
 
-    </div><!-- /actions -->
+    </div>
 
-    <!-- Divisor -->
     <div class="divider">ou</div>
 
-    <!-- CTA comunidade -->
     <button class="btn-community" onclick="openModal()">
       ✨ Faça parte da comunidade Salsa
     </button>
 
-  </div><!-- /card -->
-</div><!-- /page -->
+  </div>
+</div>
 
 <!-- ═══════ MODAL CADASTRO ═══════ -->
 <div class="modal-overlay" id="modal-overlay" onclick="handleOverlayClick(event)">
@@ -695,60 +643,37 @@
     <h2 class="modal-title">Comunidade Salsa 🔥</h2>
     <p class="modal-sub">Fique por dentro de promoções exclusivas, eventos e novidades antes de todo mundo.</p>
 
-    <!--
-      action aponta para formResponse (submissão direta).
-      target="gform-target" envia para o iframe oculto — o usuário nunca sai da página.
-    -->
-    <!-- ═══════ MODAL CADASTRO ═══════ -->
-<div class="modal-overlay" id="modal-overlay" onclick="handleOverlayClick(event)">
-  <div class="modal" role="dialog" aria-modal="true" aria-label="Cadastro Comunidade Salsa">
-    <div class="modal-handle"></div>
+    <!-- Sem action/method — o submit é feito via fetch no JS -->
+    <form id="gform" onsubmit="handleSubmit(event)" novalidate>
 
-    <h2 class="modal-title">Comunidade Salsa 🔥</h2>
-    <p class="modal-sub">
-      Fique por dentro de promoções exclusivas, eventos e novidades antes de todo mundo.
-    </p>
-
-    <form
-      id="gform"
-      action="https://formspree.io/f/mykozzgg"
-      method="POST"
-      onsubmit="handleSubmit(event)"
-    >
-
-      <!-- Nome -->
       <div class="field">
         <label for="inp-nome">Nome</label>
-        <input 
-          id="inp-nome" 
+        <input
+          id="inp-nome"
           name="nome"
-          type="text" 
-          placeholder="Seu nome completo" 
-          autocomplete="name" 
+          type="text"
+          placeholder="Seu nome completo"
+          autocomplete="name"
         />
         <p class="field-error" id="err-nome">Informe seu nome.</p>
       </div>
 
-      <!-- WhatsApp -->
       <div class="field">
         <label for="inp-wa">WhatsApp</label>
-        <input 
-          id="inp-wa" 
+        <input
+          id="inp-wa"
           name="whatsapp"
-          type="tel" 
-          placeholder="(11) 99999-9999" 
-          autocomplete="tel" 
-          inputmode="numeric" 
+          type="tel"
+          placeholder="(11) 99999-9999"
+          autocomplete="tel"
+          inputmode="numeric"
         />
         <p class="field-error" id="err-wa">Informe um WhatsApp válido.</p>
       </div>
 
-      <!-- Aviso LGPD -->
       <div class="legal">
         <span class="legal-icon">⚠️</span>
-        <span>
-          Seu número de WhatsApp poderá ser utilizado para envio de promoções e avisos através da comunidade do Salsa.
-        </span>
+        <span>Seu número de WhatsApp poderá ser utilizado para envio de promoções e avisos através da comunidade do Salsa.</span>
       </div>
 
       <button type="submit" class="btn-submit" id="btn-submit">
@@ -757,10 +682,9 @@
     </form>
   </div>
 </div>
+
 <script>
-  /* ════════════════════════════════════════
-     EMBERS — Partículas decorativas
-  ════════════════════════════════════════ */
+  /* ── Embers ── */
   (function () {
     const wrap   = document.getElementById('embers');
     const colors = ['#ff6c1a','#ff2b4a','#ffb800','#ff4400'];
@@ -781,9 +705,7 @@
     }
   })();
 
-  /* ════════════════════════════════════════
-     WI-FI — Toggle reveal
-  ════════════════════════════════════════ */
+  /* ── Wi-Fi toggle ── */
   let wifiOpen = false;
   function toggleWifi() {
     wifiOpen = !wifiOpen;
@@ -793,9 +715,7 @@
     btn.querySelector('.btn-label').textContent = wifiOpen ? 'Conectado!' : 'Clique para ver';
   }
 
-  /* ════════════════════════════════════════
-     COPIAR para área de transferência
-  ════════════════════════════════════════ */
+  /* ── Copiar ── */
   function copy(text, btn) {
     const finish = () => {
       btn.textContent = '✓ Ok';
@@ -805,10 +725,8 @@
     if (navigator.clipboard) {
       navigator.clipboard.writeText(text).then(finish).catch(finish);
     } else {
-      // Fallback legado
       const ta = Object.assign(document.createElement('textarea'), {
-        value: text,
-        style: 'position:fixed;opacity:0'
+        value: text, style: 'position:fixed;opacity:0'
       });
       document.body.appendChild(ta);
       ta.select();
@@ -818,9 +736,7 @@
     }
   }
 
-  /* ════════════════════════════════════════
-     MODAL — abrir / fechar
-  ════════════════════════════════════════ */
+  /* ── Modal ── */
   function openModal() {
     document.getElementById('modal-overlay').classList.add('open');
     document.body.style.overflow = 'hidden';
@@ -832,17 +748,13 @@
     document.body.style.overflow = '';
   }
 
-  // Fecha ao clicar fora do modal
   function handleOverlayClick(e) {
     if (e.target === document.getElementById('modal-overlay')) closeModal();
   }
 
-  // Fecha com ESC
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
-  /* ════════════════════════════════════════
-     MÁSCARA WhatsApp
-  ════════════════════════════════════════ */
+  /* ── Máscara WhatsApp ── */
   document.getElementById('inp-wa').addEventListener('input', function () {
     let v = this.value.replace(/\D/g, '').slice(0, 11);
     if (v.length >= 7)
@@ -854,9 +766,7 @@
     this.value = v;
   });
 
-  /* ════════════════════════════════════════
-     VALIDAÇÃO
-  ════════════════════════════════════════ */
+  /* ── Validação ── */
   function validate() {
     let ok = true;
 
@@ -881,7 +791,6 @@
     return ok;
   }
 
-  // Remove erros ao focar
   ['inp-nome', 'inp-wa'].forEach(id => {
     document.getElementById(id).addEventListener('focus', function () {
       this.classList.remove('err');
@@ -890,47 +799,53 @@
     });
   });
 
-  /* ════════════════════════════════════════
-     SUBMIT — envia silenciosamente no iframe
-  ════════════════════════════════════════ */
-  function handleSubmit(e) {
+  /* ── Submit via fetch → Formspree ── */
+  async function handleSubmit(e) {
     e.preventDefault();
     if (!validate()) return;
 
-    const nome = document.getElementById('inp-nome').value.trim();
-    const wa   = document.getElementById('inp-wa').value.trim();
-
-    // Preenche campos ocultos mapeados para o Google Forms
-    document.getElementById('f-nome').value = nome;
-    document.getElementById('f-wa').value   = wa;
-
-    // UX: desabilita botão e mostra spinner
     const btn = document.getElementById('btn-submit');
     btn.disabled = true;
     btn.innerHTML = '<span class="spinner"></span> Enviando…';
 
-    // Submete para o iframe (Google Forms recebe, usuário fica na página)
-    document.getElementById('gform').submit();
+    const nome = document.getElementById('inp-nome').value.trim();
+    const wa   = document.getElementById('inp-wa').value.trim();
 
-    // Após envio: fecha modal + exibe toast de sucesso
-    setTimeout(() => {
+    try {
+      const res = await fetch('https://formspree.io/f/mykozzgg', {
+        method: 'POST',
+        headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nome, whatsapp: wa }),
+      });
+
+      if (res.ok) {
+        // Sucesso
+        closeModal();
+        showToast('🎉 Cadastro realizado! Bem-vindo à comunidade Salsa.', false);
+        document.getElementById('inp-nome').value = '';
+        document.getElementById('inp-wa').value   = '';
+      } else {
+        // Formspree retornou erro (ex.: form inativo, spam, etc.)
+        const data = await res.json().catch(() => ({}));
+        const msg  = (data.errors || []).map(x => x.message).join(', ') || 'Tente novamente.';
+        showToast('⚠️ Erro ao cadastrar: ' + msg, true);
+      }
+    } catch (err) {
+      // Erro de rede
+      showToast('⚠️ Sem conexão. Verifique o Wi-Fi e tente novamente.', true);
+    } finally {
       btn.disabled = false;
       btn.textContent = 'Entrar na comunidade';
-      closeModal();
-      showToast();
-      // Limpa formulário
-      document.getElementById('inp-nome').value = '';
-      document.getElementById('inp-wa').value   = '';
-    }, 1500);
+    }
   }
 
-  /* ════════════════════════════════════════
-     TOAST
-  ════════════════════════════════════════ */
-  function showToast() {
+  /* ── Toast ── */
+  function showToast(msg, isError) {
     const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.toggle('error', !!isError);
     t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 4000);
+    setTimeout(() => t.classList.remove('show'), 4500);
   }
 </script>
 </body>
