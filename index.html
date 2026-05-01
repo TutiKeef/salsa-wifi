@@ -699,43 +699,64 @@
       action aponta para formResponse (submissão direta).
       target="gform-target" envia para o iframe oculto — o usuário nunca sai da página.
     -->
+    <!-- ═══════ MODAL CADASTRO ═══════ -->
+<div class="modal-overlay" id="modal-overlay" onclick="handleOverlayClick(event)">
+  <div class="modal" role="dialog" aria-modal="true" aria-label="Cadastro Comunidade Salsa">
+    <div class="modal-handle"></div>
+
+    <h2 class="modal-title">Comunidade Salsa 🔥</h2>
+    <p class="modal-sub">
+      Fique por dentro de promoções exclusivas, eventos e novidades antes de todo mundo.
+    </p>
+
     <form
       id="gform"
       action="https://formspree.io/f/mykozzgg"
       method="POST"
-      target="gform-target"
       onsubmit="handleSubmit(event)"
-      novalidate
     >
-      <!-- Campos ocultos mapeados para o Google Forms -->
-      <input type="hidden" name="entry.735606983" id="f-nome" />
-      <input type="hidden" name="entry.636682420" id="f-wa"   />
 
-      <!-- Nome visível -->
+      <!-- Nome -->
       <div class="field">
         <label for="inp-nome">Nome</label>
-        <input id="inp-nome" type="text" placeholder="Seu nome completo" autocomplete="name" />
+        <input 
+          id="inp-nome" 
+          name="nome"
+          type="text" 
+          placeholder="Seu nome completo" 
+          autocomplete="name" 
+        />
         <p class="field-error" id="err-nome">Informe seu nome.</p>
       </div>
 
-      <!-- WhatsApp visível com máscara -->
+      <!-- WhatsApp -->
       <div class="field">
         <label for="inp-wa">WhatsApp</label>
-        <input id="inp-wa" type="tel" placeholder="(11) 99999-9999" autocomplete="tel" inputmode="numeric" />
+        <input 
+          id="inp-wa" 
+          name="whatsapp"
+          type="tel" 
+          placeholder="(11) 99999-9999" 
+          autocomplete="tel" 
+          inputmode="numeric" 
+        />
         <p class="field-error" id="err-wa">Informe um WhatsApp válido.</p>
       </div>
 
-      <!-- Aviso legal (LGPD) -->
+      <!-- Aviso LGPD -->
       <div class="legal">
         <span class="legal-icon">⚠️</span>
-        <span>Seu número de WhatsApp poderá ser utilizado para envio de promoções e avisos através da comunidade do Salsa.</span>
+        <span>
+          Seu número de WhatsApp poderá ser utilizado para envio de promoções e avisos através da comunidade do Salsa.
+        </span>
       </div>
 
-      <button type="submit" class="btn-submit" id="btn-submit">Entrar na comunidade</button>
+      <button type="submit" class="btn-submit" id="btn-submit">
+        Entrar na comunidade
+      </button>
     </form>
   </div>
 </div>
-
 <script>
   /* ════════════════════════════════════════
      EMBERS — Partículas decorativas
